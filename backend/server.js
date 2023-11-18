@@ -6,7 +6,10 @@ import cookieParser from "cookie-parser";
 import authRoute from "./Routes/auth.routes.js";
 import UsersRoute from "./Routes/users.routes.js";
 import HotelRoute from "./Routes/hotel.routes.js";
-import RoomRoute from  "./Routes/room.routes.js";
+import roomRoute from "./Routes/room.routes.js";
+import bookingRoute from "./Routes/room.routes.js";
+
+
 const app = express();
 
 dotenv.config();
@@ -16,10 +19,12 @@ app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 
+
 app.use("/api/auth", authRoute);
 app.use("/api/user", UsersRoute);
 app.use("/api/hotel", HotelRoute);
-app.use("/api/room",RoomRoute);
+app.use("/api/room", roomRoute);
+app.use("/api/booking", roomRoute);
 const connect = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
