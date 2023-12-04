@@ -1,6 +1,7 @@
 import Room from "../Models/roomModel.js";
 import Hotel from "../Models/hotelModel.js";
 import { createError } from "../Utils/Error.js";
+import {updateHotel} from "./hotelController.js"
 
 export const createRoom = async (req, res, next) => {
   const hotelId = req.params.hotelid;
@@ -21,13 +22,30 @@ export const createRoom = async (req, res, next) => {
   }
 };
 
+
 export const updateRoom = async (req, res, next) => {
   try {
+    const roomId = req.params.id;
+    const updatedRoomData = req.body;
+
+    // Update the room in the Room collection
     const updatedRoom = await Room.findByIdAndUpdate(
-      req.params.id,
-      { $set: req.body },
+      roomId,
+      { $set: updatedRoomData },
       { new: true }
     );
+
+    if (!updatedRoom) {
+      // If the room doesn't exist, return an error
+      return res.status(404).json({ error: 'Room not found' });
+    }
+
+    // Get the hotel ID associated with the room
+    const hotelId = updatedRoom.hotelId; // Assuming there is a hotelId field in the Room model
+
+    // Trigger update in the HotelController
+    await updateHotel(roomId, updatedRoomData);
+
     res.status(200).json(updatedRoom);
   } catch (err) {
     next(err);
